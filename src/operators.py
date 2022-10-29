@@ -1,7 +1,6 @@
 from binaryOps import *
 from indexMaps import *
 import numpy as np
-import scipy.sparse as spr
 
 
 def total_spin(integer, systemSize, spinValue = 1/2):
@@ -82,17 +81,17 @@ def construct_hamiltonian(systemSize, totalSpin = None, spinValue = 1/2, couplin
 
     hSize = len(isDict) # reduced hamiltonian size is only considering a subsystem due to total spin conservation
 
-    H = spr.lil_matrix((hSize,hSize))
+    H = np.zeros([hSize,hSize])
 
     for i in range(hSize):
-        H[i,i] = calculate_sz_coupling(isDict[i], systemSize, spinValue = spinValue)
+        H[i][i] = calculate_sz_coupling(isDict[i], systemSize, spinValue = spinValue)
         createdStates = calculate_ladder_operators(isDict[i], systemSize)
 
         nonzeroEntries = [siDict[state] for state in createdStates]
         for j in nonzeroEntries:
-            H[i,j] = 1/2
+            H[i][j] = 1/2
 
-    return (coupling * H).tocsr()
+    return coupling * H
 
 
 
